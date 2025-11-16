@@ -78,7 +78,15 @@ def main():
             
         pygame.display.flip()
         clock.tick(60)
+score = 0
 
+if ball.rect().colliderect(paddle.rect):
+    score += 1
+
+if event.type == pygame.KEYDOWN and event.key == pygame.K_r and game_over:
+    score = 0
+
+draw_text(screen, f"Score: {score}", 28, 8, 8)
     pygame.quit()
 
 if __name__ == "__main__":
