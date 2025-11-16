@@ -20,7 +20,7 @@ def create_ball(screen_width):
     }
     return ball
 
-def move_ball(ball, screen_width, screen_height):
+def move_ball(ball, screen_width, screen_height, stick_man=None):
     total_speed = ball['base_speed'] + ball['speed_increase']
     
     current_magnitude = math.sqrt(ball['speed_x']**2 + ball['speed_y']**2)
@@ -33,6 +33,10 @@ def move_ball(ball, screen_width, screen_height):
 
     ball['x'] += ball['speed_x']
     ball['y'] += ball['speed_y']
+    
+    if stick_man and check_collision(ball, stick_man):
+        ball['speed_y'] = -abs(ball['speed_y'])  
+        ball['bounce_count'] += 1
 
     if ball['x'] <= 0 or ball['x'] >= screen_width:
         ball['speed_x'] = -ball['speed_x']
@@ -48,6 +52,22 @@ def move_ball(ball, screen_width, screen_height):
 
     if ball['y'] > screen_height:
         ball['active'] = False 
+        
+def check_collision(ball, stick_man):
+    stickman_rect = pygame.Rect(
+        stick_man.x - 25, 
+        stick_man.y - 80, 
+        50,               
+        60                 
+    )
+    
+    closest_x = max(stickman_rect.left, min(ball['x'], stickman_rect.right))
+    closest_y = max(stickman_rect.top, min(ball['y'], stickman_rect.bottom))
+    
+    distance_x = ball['x'] - closest_x
+    distance_y = ball['y'] - closest_y
+
+    return (distance_x ** 2 + distance_y ** 2) <= (ball['size'] ** 2)
 
 def draw_ball(ball, screen):
     if ball['active']:
@@ -61,8 +81,8 @@ def increase_all_balls_speed(balls, increase_amount):
         ball['speed_increase'] += increase_amount
     return balls
         
-def update_ball(ball, screen_width, screen_height, screen):
-    move_ball(ball, screen_width, screen_height)
+def update_ball(ball, screen_width, screen_height, screen, stick_man=None):
+    move_ball(ball, screen_width, screen_height, stick_man)
     
     if not ball['active']:
         return None 

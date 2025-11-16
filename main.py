@@ -2,7 +2,15 @@ from board import Board
 from ball import update_ball, create_ball, increase_all_balls_speed
 import pygame
 import time
-#from stickMan import StickMan
+from stickMan import StickMan
+from menu import show_start_screen
+
+try:
+    from menu import show_start_screen
+    has_menu = True
+except ImportError:
+    has_menu = False
+    print("Menu module not found - skipping start screen")
 
 def show_countdown(screen, width, height):
     font = pygame.font.Font(None, 150)
@@ -19,8 +27,11 @@ def show_countdown(screen, width, height):
 def main():
     board = Board()
     clock = pygame.time.Clock()
-    show_countdown(board.screen, board.WIDTH, board.HEIGHT)
     
+    if not show_start_screen(board.screen, board.WIDTH, board.HEIGHT):
+        return
+    show_countdown(board.screen, board.WIDTH, board.HEIGHT)
+    stick_man = StickMan(board.WIDTH // 2, board.HEIGHT - 50, board.WIDTH)
     balls = [create_ball(board.WIDTH)]  
     max_balls = 5  
     ball_spawn_interval = 15  
@@ -38,6 +49,16 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            stick_man.move_left()
+        elif keys[pygame.K_d]:
+            stick_man.move_right()
+        else:
+            stick_man.stop()
+        
+        stick_man.update()
+        
         if (current_time - last_ball_time >= ball_spawn_interval and 
             len(balls) < max_balls and not game_over and not game_won):
             balls.append(create_ball(board.WIDTH))
@@ -45,11 +66,12 @@ def main():
             balls = increase_all_balls_speed(balls, 0.2)
         
         board.draw()
-        
+        stick_man.draw(board.screen)
         
         active_balls = []
+        
         for ball in balls:
-            updated_ball = update_ball(ball, board.WIDTH, board.HEIGHT, board.screen)
+            updated_ball = update_ball(ball, board.WIDTH, board.HEIGHT, board.screen, stick_man)
             if updated_ball is not None:
                 active_balls.append(updated_ball)
             else:
@@ -83,7 +105,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-        
-   
