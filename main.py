@@ -137,10 +137,9 @@ def main():
         font = pygame.font.Font(None, 36)
         time_text = font.render(f"Time: {format_time(time_remaining)}", True, (255, 255, 255))
         level_text = font.render(f"Level: {current_level}", True, (255, 255, 255))
-        balls_text = font.render(f"Balls: {len(balls)}/{level_params['max_balls']}", True, (255, 255, 255))
         board.screen.blit(time_text, (10, 10))
         board.screen.blit(level_text, (10, 50))
-        board.screen.blit(balls_text, (10, 130))
+
         draw_hearts(board.screen, board.WIDTH - 120, 30, lives)
         
         stick_man.draw(board.screen)
