@@ -1,4 +1,3 @@
-#from paddle import Paddle;
 import pygame
 
 class Board:
@@ -12,5 +11,6 @@ class Board:
 
     def draw(self):
         self.screen.fill((0, 0, 0))
+        
     
 

@@ -1,9 +1,9 @@
-from stickMan import StickMan
-from menu import show_start_screen
 from board import Board
 from ball import update_ball, create_ball, increase_all_balls_speed
 import pygame
 import time
+from stickMan import StickMan
+from menu import show_start_screen
 
 try:
     from menu import show_start_screen
@@ -137,6 +137,7 @@ def main():
         font = pygame.font.Font(None, 36)
         time_text = font.render(f"Time: {format_time(time_remaining)}", True, (255, 255, 255))
         level_text = font.render(f"Level: {current_level}", True, (255, 255, 255))
+
         board.screen.blit(time_text, (10, 10))
         board.screen.blit(level_text, (10, 50))
 

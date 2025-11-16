@@ -56,7 +56,7 @@ def move_ball(ball, screen_width, screen_height, stick_man=None):
 def check_collision(ball, stick_man):
     stickman_rect = pygame.Rect(
         stick_man.x - 25, 
-        stick_man.y - 80, 
+        stick_man.y - 40, 
         50,               
         60                 
     )

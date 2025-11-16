@@ -9,7 +9,7 @@ class StickMan:
         self.x = x
         self.y = y
         self.screen_width = screen_width
-        self.speed = 5
+        self.speed = 8
         self.direction = 1  # 1 for right, -1 for left
         
         # Body parts size
