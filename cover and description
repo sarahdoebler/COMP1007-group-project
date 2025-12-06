@@ -1,0 +1,73 @@
+import sys, io, urllib.request, pygame
+
+COVER_URL = "https://github.com/github-copilot/chat/attachments/c1ddff4c-f362-432f-8e37-b4dd3ceaf9e2"
+W, H = 720, 720
+FPS = 60  # only used to compute delay
+
+pygame.init()
+screen = pygame.display.set_mode((W, H))
+pygame.display.set_caption("Cover → Description → Game")
+font_big = pygame.font.SysFont(None, 36)
+font_small = pygame.font.SysFont(None, 24)
+
+def load_image(url):
+    try:
+        data = urllib.request.urlopen(url, timeout=8).read()
+        return pygame.transform.smoothscale(pygame.image.load(io.BytesIO(data)).convert_alpha(), (W, H))
+    except Exception:
+        s = pygame.Surface((W, H))
+        s.fill((150, 180, 210))
+        s.blit(font_small.render("Failed to load cover image", True, (40,40,40)), (20,20))
+        return s
+
+cover = load_image(COVER_URL)
+state = "cover"  # cover, desc, game
+delay = max(1, int(1000 / FPS))
+
+lines = [
+    "Game: Don't let the ball drop.",
+    "Control the character to move horizontally to catch the ball.",
+    "Score +1 for each catch.",
+    "Ball on the ground = game over"
+]
+
+running = True
+while running:
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+            running = False
+        elif e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+            if state == "cover":
+                running = False
+            else:
+                state = "cover"
+        elif e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
+            if state == "cover":
+                state = "desc"
+            elif state == "desc":
+                state = "game"
+            else:
+                state = "cover"
+
+    if state == "cover":
+        screen.blit(cover, (0, 0))
+        hint = font_small.render("Click to view description", True, (255,255,255))
+        screen.blit(hint, hint.get_rect(center=(W//2, H-40)))
+    elif state == "desc":
+        screen.fill((18, 22, 30))
+        y = 80
+        for t in lines:
+            screen.blit(font_big.render(t, True, (230,230,230)), (40, y))
+            y += 48
+        hint = font_small.render("Click to start game", True, (170,170,170))
+        screen.blit(hint, (40, H-40))
+    else:  # game placeholder
+        screen.fill((12, 30, 20))
+        screen.blit(font_big.render("Game screen (placeholder)", True, (230,230,230)), (36, 36))
+        screen.blit(font_small.render("Press ESC to return to cover", True, (200,200,200)), (36, 90))
+
+    pygame.display.flip()
+    pygame.time.delay(delay)
+
+pygame.quit()
+sys.exit()
